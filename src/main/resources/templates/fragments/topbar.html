@@ -3,33 +3,29 @@
 <body>
 
 <div th:fragment="nav-link(link, name)">
-    <a th:href="${link}" th:classappend="${#httpServletRequest.getRequestURI().equals(link)} ? 'nav-link active' : 'nav-link'" th:text="${name}"></a>
+    <a th:href="${link}"
+       th:classappend="${#httpServletRequest.getRequestURI().equals(link)} ? 'nav-link active' : 'nav-link'"
+       th:text="${name}"></a>
 </div>
-
-<div th:fragment="full-menu">
+<div th:fragment="menu">
+    <hr/>
     <ul class="nav nav-pills">
-        <li class="nav-item">
-            <div th:replace="fragments/topbar::nav-link('/', 'Главная')"></div>
-        </li>
-        <li class="nav-item">
-            <div th:replace="fragments/topbar::nav-link('/about', 'О приложении')"></div>
-        </li>
-        <!--
-        <li class="nav-item">
-            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <a class="dropdown-item" href="#">Something else here</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Separated link</a>
-            </div>
-        </li>
-        -->
+        <div th:each="item : ${@pageService.getMenuData()}">
+            <li class="nav-item" th:if="${item.items == null}">
+                <div th:replace="fragments/topbar::nav-link(${item.link}, ${item.name})"></div>
+            </li>
+            <li class="nav-item dropdown" th:unless="${item.items == null}">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" th:href="${item.link}" th:text="${item.name}"
+                   role="button" aria-haspopup="true" aria-expanded="false"></a>
+                <div class="dropdown-menu">
+                    <div th:each="subItem : ${item.items}">
+                        <a class="dropdown-item" th:href="${subItem.link}" th:text="${subItem.name}"></a>
+                    </div>
+                </div>
+            </li>
+        </div>
     </ul>
+    <hr/>
 </div>
 </body>
 </html>
